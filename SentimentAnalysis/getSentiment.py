@@ -113,3 +113,39 @@ test_text3 = "I am neutral"
 print(sentiment_analysis(test_text3))
 test_text4 = "A variety of factors, encompassing both internal and external influences, contribute to the development of diverse perspectives and behaviors in individuals across different environments. These elements, while subject to variation depending on situational context, can include but are not limited to, cultural background, socioeconomic conditions, personal experiences, and the interplay between individual psychology and societal norms. By considering a wide range of influences and acknowledging the multifaceted nature of human decision-making processes, one can gain a more comprehensive understanding of the complexities that shape actions, thoughts, and attitudes."
 print(sentiment_analysis(test_text4))
+
+
+
+## Here is a basic sentiment analysis program using TextBlob
+from textblob import TextBlob
+from bs4 import BeautifulSoup
+import requests
+
+def sentiment_analysis(sentence):
+    blob = TextBlob(sentence)
+    return blob.sentiment.polarity
+
+
+url = 'https://www.imdb.com/title/tt0111161/reviews?ref_=tt_ql_3'
+
+response = requests.get(url)
+
+parse = BeautifulSoup(response.content,'html.parser')
+
+text = parse.find_all('div', class_='text show-more__control')
+
+for review in text:
+    review_text = review.get_text(strip=True)  
+    sentiment = sentiment_analysis(review_text)
+    
+    print(f'Review: {review_text}')
+    print(f'Sentiment Polarity: {sentiment:.2f}')
+    
+    if sentiment > 0:
+        print("The review is positive")
+    elif sentiment < 0:
+        print("The review is negative")
+    else:
+        print("The review is neutral")
+    
+    print()
